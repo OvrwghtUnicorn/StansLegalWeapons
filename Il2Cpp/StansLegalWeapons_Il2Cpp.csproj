@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ArmsDealerShop</RootNamespace>
+    <Nullable>disable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyName>StansLegalWeapons-Il2Cpp_$(FileVersion)</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GameRootPath>Z:\Steam\steamapps\common\Schedule I</GameRootPath>
+    <GameManagedPath>$(GameRootPath)\MelonLoader\Il2CppAssemblies</GameManagedPath>
+    <NetPath>$(GameRootPath)\MelonLoader\net6</NetPath>
+    <GameModsPath>$(GameRootPath)\Mods\</GameModsPath>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="COPY &quot;$(TargetPath)&quot; &quot;$(GameModsPath)&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameManagedPath)\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GameManagedPath)\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameManagedPath)\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(GameManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(GameManagedPath)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>$(GameManagedPath)\UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(GameManagedPath)\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="MelonLoader">
+      <HintPath>$(NetPath)\MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(NetPath)\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(GameManagedPath)\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(NetPath)\Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Common">
+      <HintPath>$(NetPath)\Il2CppInterop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Generator">
+      <HintPath>$(NetPath)\Il2CppInterop.Generator.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppFishNet.Runtime">
+      <HintPath>$(GameManagedPath)\Il2CppFishNet.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

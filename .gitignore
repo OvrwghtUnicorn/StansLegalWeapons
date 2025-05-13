@@ -1,0 +1,11 @@
+Il2Cpp/obj/
+Il2Cpp/bin/
+Mono/obj/
+Mono/bin/
+BundleInfo/README.md
+*.user
+.vs/
+*.dll
+
+# Build props
+local.*

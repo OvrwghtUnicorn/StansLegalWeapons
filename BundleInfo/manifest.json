@@ -1,0 +1,9 @@
+{
+	"name": "StansLegalWeapons",
+	"version_number": "1.2.0",
+	"description": "Stan's legal weapons is a simple mod that adds a shop interface to the Arms Dealer, so that you don't need to navigate through the endless dialogue menus to buy 1 item at a time.",
+	"website_url": "https://github.com/OvrwghtUnicorn/StansLegalWeapons",
+	"dependencies": [
+		"LavaGang-MelonLoader-0.7.0"
+	]
+}
