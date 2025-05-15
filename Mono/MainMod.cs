@@ -17,7 +17,7 @@ namespace StansLegalWeapons {
         public const string Description = "Adds a shop interface for stan the arms dealer";
         public const string Author = "OverweightUnicorn";
         public const string Company = "UnicornsCanMod";
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
         public const string DownloadLink = null;
     }
 
@@ -27,12 +27,14 @@ namespace StansLegalWeapons {
         public DialogueController_ArmsDealer stan = null;
         public static ShopInterface Shop = null;
         public static GameObject shopGo = null;
+        public static Dictionary<string, HashSet<string>> allListings = new Dictionary<string, HashSet<string>>();
 
         public override void OnLateInitializeMelon() {
             ScheduleOne.Persistence.LoadManager.Instance.onLoadComplete.AddListener((UnityAction)Initialize);
         }
 
         public void Initialize() {
+            MelonLogger.Msg(System.ConsoleColor.Magenta,"Stan's 'Legal' Weapons is in business");
             stan = GameObject.FindObjectOfType<DialogueController_ArmsDealer>();
             if (stan != null) {
                 GameObject stanGo = stan.gameObject;
@@ -100,24 +102,53 @@ namespace StansLegalWeapons {
             }
         }
 
-        public void CreateListings(List<DialogueController_ArmsDealer.WeaponOption> weaponOptions, string type) {
-            foreach (DialogueController_ArmsDealer.WeaponOption option in weaponOptions) {
-                ShopListing newListing = new ShopListing();
-                newListing.name = $"{option.Name} ({option.Price}) ({type}, ) [{option.Item.RequiredRank.ToString()}]";
-                newListing.OverridePrice = true;
-                newListing.OverriddenPrice = option.Price;
-                newListing.Item = option.Item;
-                newListing.MinimumGameCreationVersion = 27;
-                newListing.CanBeDelivered = true;
-                newListing.DefaultStock = 1000;
-                Shop.Listings.Add(newListing);
+        public static void CreateListings(List<DialogueController_ArmsDealer.WeaponOption> weaponOptions, string type, bool createUi = false) {
+            HashSet<string> typeListings;
+            if (allListings.ContainsKey(type)) {
+                typeListings = allListings[type];
+            } else {
+                typeListings = new HashSet<string>();
             }
+
+            foreach (DialogueController_ArmsDealer.WeaponOption option in weaponOptions) {
+                if (!typeListings.Contains(option.Item.ID)) {
+                    ShopListing newListing = WeaponOptionToShopListing(option, type);
+                    typeListings.Add(newListing.Item.ID);
+                    Shop.Listings.Add(newListing);
+                    if (createUi) {
+                        Shop.CreateListingUI(newListing);
+                    }
+                }
+            }
+
+            allListings[type] = typeListings;
         }
 
-        [HarmonyPatch(typeof(DialogueController_ArmsDealer),nameof(DialogueController_ArmsDealer.ChoiceCallback))]
-        public static class DialogueController_ArmsDealer_ChoiceCallback_Patch{
-            public static bool Prefix(ref string choiceLabel) {
+        public static ShopListing WeaponOptionToShopListing(DialogueController_ArmsDealer.WeaponOption weaponOption, string type) {
+            ShopListing newListing = new ShopListing();
+            newListing.name = $"{weaponOption.Name} ({weaponOption.Price}) ({type}, ) [{weaponOption.Item.RequiredRank.ToString()}]";
+            newListing.OverridePrice = true;
+            newListing.OverriddenPrice = weaponOption.Price;
+            newListing.Item = weaponOption.Item;
+            newListing.MinimumGameCreationVersion = 27;
+            newListing.CanBeDelivered = true;
+            newListing.DefaultStock = 1000;
+            return newListing;
+        }
+
+        [HarmonyPatch(typeof(DialogueController_ArmsDealer), nameof(DialogueController_ArmsDealer.ChoiceCallback))]
+        public static class DialogueController_ArmsDealer_ChoiceCallback_Patch {
+            public static bool Prefix(DialogueController_ArmsDealer __instance, ref string choiceLabel) {
                 if (Shop != null) {
+                    if (__instance.MeleeWeapons.Count != allListings["Melee"].Count) {
+                        CreateListings(__instance.MeleeWeapons, "Melee", true);
+                    }
+                    if (__instance.RangedWeapons.Count != allListings["Ranged"].Count) {
+                        CreateListings(__instance.RangedWeapons, "Ranged", true);
+                    }
+                    if (__instance.Ammo.Count != allListings["Ammo"].Count) {
+                        CreateListings(__instance.Ammo, "Ammo", true);
+                    }
                     Shop.SetIsOpen(true);
                     return false;
                 }
